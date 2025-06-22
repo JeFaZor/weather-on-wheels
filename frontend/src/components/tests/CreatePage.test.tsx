@@ -50,16 +50,16 @@ describe('CreatePage', () => {
     render(<CreatePage />);
     
     expect(screen.getByText('Add New Place')).toBeInTheDocument();
-    expect(screen.getByLabelText('Place Name:')).toBeInTheDocument();
-    expect(screen.getByLabelText('Place Type:')).toBeInTheDocument();
-    expect(screen.getByLabelText('Location:')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter place name')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Address will be filled automatically when you select location')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save Place' })).toBeInTheDocument();
   });
 
   test('shows character count for place name', () => {
     render(<CreatePage />);
     
-    const nameInput = screen.getByLabelText('Place Name:');
+    const nameInput = screen.getByPlaceholderText('Enter place name');
     fireEvent.change(nameInput, { target: { value: 'Test Restaurant' } });
     
     expect(screen.getByText('15/25 characters')).toBeInTheDocument();
@@ -68,10 +68,12 @@ describe('CreatePage', () => {
   test('validates name length', () => {
     render(<CreatePage />);
     
-    const nameInput = screen.getByLabelText('Place Name:');
+    const nameInput = screen.getByPlaceholderText('Enter place name');
+    const addressInput = screen.getByPlaceholderText('Address will be filled automatically when you select location');
     const submitButton = screen.getByRole('button', { name: 'Save Place' });
     
-    // Set a name longer than 25 characters
+    // Fill address first, then set a name longer than 25 characters
+    fireEvent.change(addressInput, { target: { value: 'Some address' } });
     fireEvent.change(nameInput, { target: { value: 'This is a very long restaurant name that exceeds the twenty five character limit' } });
     fireEvent.click(submitButton);
     
@@ -84,13 +86,28 @@ describe('CreatePage', () => {
     const submitButton = screen.getByRole('button', { name: 'Save Place' });
     fireEvent.click(submitButton);
     
+    expect(mockAlert).toHaveBeenCalledWith('Please fill all required fields');
+  });
+
+  test('validates location selection', () => {
+    render(<CreatePage />);
+    
+    const nameInput = screen.getByPlaceholderText('Enter place name');
+    const addressInput = screen.getByPlaceholderText('Address will be filled automatically when you select location');
+    const submitButton = screen.getByRole('button', { name: 'Save Place' });
+    
+    // Fill name and address but don't select location
+    fireEvent.change(nameInput, { target: { value: 'Test Place' } });
+    fireEvent.change(addressInput, { target: { value: 'Test Address' } });
+    fireEvent.click(submitButton);
+    
     expect(mockAlert).toHaveBeenCalledWith('Please select a location on the map');
   });
 
   test('changes place type selection', () => {
     render(<CreatePage />);
     
-    const typeSelect = screen.getByLabelText('Place Type:');
+    const typeSelect = screen.getByRole('combobox');
     fireEvent.change(typeSelect, { target: { value: 'Hotel' } });
     
     expect(typeSelect).toHaveValue('Hotel');
@@ -106,14 +123,14 @@ describe('CreatePage', () => {
   test('name input respects maxLength attribute', () => {
     render(<CreatePage />);
     
-    const nameInput = screen.getByLabelText('Place Name:') as HTMLInputElement;
+    const nameInput = screen.getByPlaceholderText('Enter place name') as HTMLInputElement;
     expect(nameInput.maxLength).toBe(25);
   });
 
   test('shows correct placeholder for address', () => {
     render(<CreatePage />);
     
-    const addressInput = screen.getByLabelText('Address:');
+    const addressInput = screen.getByPlaceholderText('Address will be filled automatically when you select location');
     expect(addressInput).toHaveAttribute('placeholder', 'Address will be filled automatically when you select location');
   });
 });
