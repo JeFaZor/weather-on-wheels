@@ -1,18 +1,15 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 
-// Mock the API
 jest.mock('../../services/api', () => ({
   createPlace: jest.fn().mockResolvedValue({})
 }));
 
-// Mock react-router-dom
 jest.mock('react-router-dom', () => ({
   Link: ({ children, to }: any) => <a href={to}>{children}</a>,
   useNavigate: () => jest.fn()
 }));
 
-// Mock leaflet components
 jest.mock('react-leaflet', () => ({
   MapContainer: ({ children }: any) => <div data-testid="map-container">{children}</div>,
   TileLayer: () => <div data-testid="tile-layer" />,
@@ -20,7 +17,6 @@ jest.mock('react-leaflet', () => ({
   useMapEvents: () => null
 }));
 
-// Mock leaflet
 jest.mock('leaflet', () => ({
   Icon: {
     Default: {
@@ -30,14 +26,12 @@ jest.mock('leaflet', () => ({
   }
 }));
 
-// Mock window.alert
 const mockAlert = jest.fn();
 Object.defineProperty(window, 'alert', {
   writable: true,
   value: mockAlert
 });
 
-// Import after mocks
 import CreatePage from '../CreatePage';
 
 describe('CreatePage', () => {
@@ -72,7 +66,6 @@ describe('CreatePage', () => {
     const addressInput = screen.getByPlaceholderText('Address will be filled automatically when you select location');
     const submitButton = screen.getByRole('button', { name: 'Save Place' });
     
-    // Fill address first, then set a name longer than 25 characters
     fireEvent.change(addressInput, { target: { value: 'Some address' } });
     fireEvent.change(nameInput, { target: { value: 'This is a very long restaurant name that exceeds the twenty five character limit' } });
     fireEvent.click(submitButton);
@@ -96,7 +89,6 @@ describe('CreatePage', () => {
     const addressInput = screen.getByPlaceholderText('Address will be filled automatically when you select location');
     const submitButton = screen.getByRole('button', { name: 'Save Place' });
     
-    // Fill name and address but don't select location
     fireEvent.change(nameInput, { target: { value: 'Test Place' } });
     fireEvent.change(addressInput, { target: { value: 'Test Address' } });
     fireEvent.click(submitButton);

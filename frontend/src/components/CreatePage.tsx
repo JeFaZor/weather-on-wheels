@@ -5,7 +5,6 @@ import L from 'leaflet';
 import './CreatePage.css';
 import { createPlace } from '../services/api';
 
-// Fix for default markers
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -18,7 +17,6 @@ interface LocationMarkerProps {
   selectedLocation: [number, number] | null;
 }
 
-// Component to handle map clicks
 const LocationMarker: React.FC<LocationMarkerProps> = ({ onLocationSelect, selectedLocation }) => {
   useMapEvents({
     click(e) {
@@ -39,11 +37,9 @@ const CreatePage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle location selection from map
   const handleLocationSelect = async (lat: number, lng: number) => {
     setSelectedLocation([lat, lng]);
     
-    // Get address from coordinates using reverse geocoding
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
@@ -64,19 +60,16 @@ const CreatePage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if required fields are filled
     if (!name || !address) {
       alert('Please fill all required fields');
       return;
     }
 
-    // Check name length
     if (name.length > 25) {
       alert('Name cannot be longer than 25 characters');
       return;
     }
 
-    // Check if location is selected
     if (!selectedLocation) {
       alert('Please select a location on the map');
       return;
@@ -96,13 +89,11 @@ const CreatePage = () => {
       await createPlace(placeData);
       alert('Place saved successfully!');
       
-      // Clear form
       setName('');
       setAddress('');
       setType('Restaurant');
       setSelectedLocation(null);
       
-      // Go back to places page
       navigate('/');
     } catch (error) {
       alert('Error saving place');

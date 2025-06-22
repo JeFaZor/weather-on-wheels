@@ -1,12 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-// Mock react-router-dom
 jest.mock('react-router-dom', () => ({
   Link: ({ children, to }: any) => <a href={to}>{children}</a>
 }));
 
-// Mock the APIs
 jest.mock('../../services/api', () => ({
   fetchPlaces: jest.fn()
 }));
@@ -15,7 +13,6 @@ jest.mock('../../services/weatherApi', () => ({
   getWeatherForPlace: jest.fn()
 }));
 
-// Mock child components
 jest.mock('../Map', () => {
   return function MockMap({ places, onPlaceClick }: any) {
     return (
@@ -44,10 +41,8 @@ jest.mock('../Weather', () => {
   };
 });
 
-// Import after mocks
 import PlacesPage from '../PlacesPage';
 
-// Mock data
 const mockPlaces = [
   {
     id: '1',
@@ -90,7 +85,6 @@ describe('PlacesPage', () => {
       expect(screen.getByText('Places List (2)')).toBeInTheDocument();
     });
 
-    // Use getAllByText to handle multiple elements
     const restaurantElements = screen.getAllByText('Test Restaurant');
     expect(restaurantElements.length).toBeGreaterThan(0);
     
@@ -140,7 +134,6 @@ describe('PlacesPage', () => {
       expect(screen.getAllByText('Test Restaurant').length).toBeGreaterThan(0);
     });
 
-    // Click on the first restaurant element (in the list, not the map)
     const restaurantElements = screen.getAllByText('Test Restaurant');
     fireEvent.click(restaurantElements[0]);
 
@@ -150,7 +143,6 @@ describe('PlacesPage', () => {
       expect(screen.getByText('Current Pressure: 1013 hPa')).toBeInTheDocument();
     });
 
-    // Should be called with the Test Restaurant object
     expect(getWeatherForPlace).toHaveBeenCalledWith(
       expect.objectContaining({
         name: 'Test Restaurant',
@@ -191,7 +183,6 @@ describe('PlacesPage', () => {
     const filterSelect = screen.getByDisplayValue('All Types');
     expect(filterSelect).toBeInTheDocument();
     
-    // Check that all options exist
     expect(screen.getByDisplayValue('All Types')).toBeInTheDocument();
   });
 

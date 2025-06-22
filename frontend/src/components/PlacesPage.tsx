@@ -11,8 +11,8 @@ interface Place {
   name: string;
   type: string;
   address: string;
-  latitude?: number;    // Add coordinates
-  longitude?: number;   // Add coordinates
+  latitude?: number;
+  longitude?: number;
   created_at: string;
 }
 
@@ -26,7 +26,6 @@ const PlacesPage = () => {
   useEffect(() => {
     const loadPlaces = async () => {
       const data = await fetchPlaces();
-      // Sort by creation date (newest first)
       const sortedData = data.sort((a: Place, b: Place) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );

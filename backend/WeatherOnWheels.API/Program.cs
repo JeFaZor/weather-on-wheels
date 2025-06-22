@@ -3,23 +3,21 @@ using WeatherOnWheels.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// MongoDB Configuration
+// MongoDB config
 var connectionString = builder.Configuration.GetConnectionString("MongoDB");
 var mongoClient = new MongoClient(connectionString);
 var database = mongoClient.GetDatabase("WeatherOnWheelsDB");
 
-// Register MongoDB database
-builder.Services.AddSingleton<IMongoDatabase>(database);
 
-// Register our services
+builder.Services.AddSingleton<IMongoDatabase>(database);
 builder.Services.AddScoped<PlaceService>();
 
-// CORS
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", builder =>
