@@ -18,6 +18,12 @@ namespace WeatherOnWheels.API.Models
         [BsonElement("address")]
         public string Address { get; set; } = "";
 
+        [BsonElement("latitude")]
+        public double? Latitude { get; set; }
+
+        [BsonElement("longitude")]
+        public double? Longitude { get; set; }
+
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; }
     }

@@ -1,9 +1,9 @@
-/* CreatePage.css */
+/* CreatePage.css - With Map */
 
 .create-page {
   padding: 20px;
   direction: ltr;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
 }
 
@@ -52,6 +52,18 @@
   font-size: 12px;
   margin-top: 3px;
   display: block;
+}
+
+/* Map selection styling */
+.map-selection {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.map-selection .leaflet-container {
+  cursor: crosshair;
 }
 
 button {

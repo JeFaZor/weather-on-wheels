@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-
+// Fix for default markers
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -16,6 +16,8 @@ interface Place {
   name: string;
   type: string;
   address: string;
+  latitude?: number;    // Add coordinates
+  longitude?: number;   // Add coordinates  
   created_at: string;
 }
 
@@ -40,23 +42,38 @@ const Map: React.FC<MapProps> = ({ places, selectedPlace, onPlaceClick }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         
-        {places.map((place, index) => (
-          <Marker
-            key={place.id}
-            position={[32.0853 + (index * 0.01), 34.7818 + (index * 0.01)]}
-            eventHandlers={{
-              click: () => onPlaceClick(place)
-            }}
-          >
-            <Popup>
-              <div>
-                <h3>{place.name}</h3>
-                <p>{place.type}</p>
-                <p>{place.address}</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {places.map((place, index) => {
+          // Use real coordinates if available, otherwise use default positions
+          let position: [number, number];
+          
+          if (place.latitude && place.longitude) {
+            position = [place.latitude, place.longitude];
+          } else {
+            // Fallback for places without coordinates (old data)
+            position = [32.0853 + (index * 0.01), 34.7818 + (index * 0.01)];
+          }
+
+          return (
+            <Marker
+              key={place.id}
+              position={position}
+              eventHandlers={{
+                click: () => onPlaceClick(place)
+              }}
+            >
+              <Popup>
+                <div>
+                  <h3>{place.name}</h3>
+                  <p>{place.type}</p>
+                  <p>{place.address}</p>
+                  {place.latitude && place.longitude && (
+                    <small>Coordinates: {place.latitude.toFixed(4)}, {place.longitude.toFixed(4)}</small>
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchPlaces } from '../services/api';
-import { getWeatherByCity, WeatherData } from '../services/weatherApi';
+import { getWeatherForPlace, WeatherData } from '../services/weatherApi';
 import Map from './Map';
 import WeatherChart from './Weather';
 import './PlacesPage.css';
@@ -11,12 +11,14 @@ interface Place {
   name: string;
   type: string;
   address: string;
+  latitude?: number;    // Add coordinates
+  longitude?: number;   // Add coordinates
   created_at: string;
 }
 
 const PlacesPage = () => {
-  const [places, setPlaces] = useState<any[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<any>(null);
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [filterType, setFilterType] = useState('all');
   const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
   const [loadingWeather, setLoadingWeather] = useState(false);
@@ -24,7 +26,11 @@ const PlacesPage = () => {
   useEffect(() => {
     const loadPlaces = async () => {
       const data = await fetchPlaces();
-      setPlaces(data);
+      // Sort by creation date (newest first)
+      const sortedData = data.sort((a: Place, b: Place) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      setPlaces(sortedData);
     };
     loadPlaces();
   }, []);
@@ -35,11 +41,10 @@ const PlacesPage = () => {
     }
   }, [selectedPlace]);
 
-  const loadWeatherData = async (place: any) => {
+  const loadWeatherData = async (place: Place) => {
     setLoadingWeather(true);
     try {
-      const cityName = place.address.split(',')[0];
-      const weather = await getWeatherByCity(cityName);
+      const weather = await getWeatherForPlace(place);
       setWeatherData(weather);
     } catch (error) {
       console.error('Failed to load weather data:', error);
@@ -91,6 +96,11 @@ const PlacesPage = () => {
                 <p className="place-type">{place.type}</p>
                 <p>{place.address}</p>
                 <small>Created: {new Date(place.created_at).toLocaleDateString('en-US')}</small>
+                {place.latitude && place.longitude && (
+                  <small style={{ display: 'block', color: '#4CAF50' }}>
+                    📍 Exact location available
+                  </small>
+                )}
               </div>
             ))
           )}

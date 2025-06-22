@@ -37,3 +37,4 @@ C:\Users\97252\OneDrive\Documents\Weather on wheels\backend\WeatherOnWheels.API\
 C:\Users\97252\OneDrive\Documents\Weather on wheels\backend\WeatherOnWheels.API\bin\Debug\net8.0\SharpCompress.dll
 C:\Users\97252\OneDrive\Documents\Weather on wheels\backend\WeatherOnWheels.API\bin\Debug\net8.0\Snappier.dll
 C:\Users\97252\OneDrive\Documents\Weather on wheels\backend\WeatherOnWheels.API\bin\Debug\net8.0\ZstdSharp.dll
+C:\Users\97252\OneDrive\Documents\Weather on wheels\backend\WeatherOnWheels.API\obj\Debug\net8.0\WeatherOnWheels.API.sourcelink.json
